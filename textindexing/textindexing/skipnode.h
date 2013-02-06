@@ -1,15 +1,9 @@
+#ifndef SKIP_NODE
+#define SKIP_NODE
  
 #include "stdafx.h"
 // Dr.Dobb's implementation
-struct Product
-{
-  float cost;
-  int   quantity;
-  int   location;
-};
- 
-typedef Product productData;
- 
+using namespace std;  
 template <class Key, class Obj>
   class SkipList;
  
@@ -87,3 +81,4 @@ template <class Key, class Obj>
   }
  
 /* End of File */
+#endif // SKIP_NODE

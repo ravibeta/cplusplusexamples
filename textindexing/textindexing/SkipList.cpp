@@ -2,32 +2,12 @@
 #include <fstream>
 #include <random>
 #include "SkipNode.h"
+#include "skiplist.h"
 #include "RandomHeight.h"
 
 using namespace std;
 
 // Dr.Dobb's implementation
-
-template <class Key, class Obj>
-  class SkipList
-  {
-  public:
-    SkipList(float,int,Key*);
-    ~SkipList();
- 
-    bool insert(Key*, Obj*);
-    bool remove(Key*);
-    Obj* retrieve(Key*);
-    void dump(ofstream&);
- 
-  private:
-    SkipNode<Key,Obj>* head;
-    SkipNode<Key,Obj>* tail;
-    float probability;
-    int maxHeight;
-    int curHeight;
-    RandomHeight* randGen;
-  };
  
 template <class Key, class Obj>
   SkipList<Key,Obj>::SkipList(float p, int m, Key* k)
