@@ -37,21 +37,22 @@ struct Word
 	int offset = 0;
 	string::const_iterator ps = text.begin();
 	int count = 0;
-	for (string::const_iterator p = text.begin(); p != text.end(); p++)
+	for (string::const_iterator p = text.begin(); p != text.end(); p++, end++)
 	{
 		if ( *p == ' ' )
 		{
 			if ( end > curr && end+1-curr < 32)
 			{
-				string* word = new string(ps, p);
-				for (string::iterator r = word->begin(); r != word->end(); r++) *r = tolower(*r);
+				string w = text.substr(curr-start, end-curr);
+				for (string::iterator r = w.begin(); r != w.end(); r++) *r = tolower(*r);
+				string* word = &w;
 				WordInfo* winfo = skiplist->retrieve(word);
 				if (!winfo)
 				{
 					winfo = new WordInfo();
 					winfo->word[0] = '\0';
-					strncpy(winfo->word, curr, end+1-curr);
-					winfo->word[end+1-curr] = '\0';	
+					strncpy(winfo->word, w.c_str(), end-curr);
+					winfo->word[end-curr] = '\0';	
 					winfo->offset.push_back(curr-start);
 					winfo->freq = 1;
 					count++;
@@ -61,10 +62,11 @@ struct Word
 					winfo->offset.push_back(curr-start);
 					winfo->freq++;
 				}
+				curr = end;
 			}
 			else
 			{
-				end++;
+				// end++;
 				curr++;
 				ps = p;
 			}
@@ -72,7 +74,7 @@ struct Word
 		else
 		{
 			if ( curr > start && *curr == ' ') curr++;
-			end++;
+			// end++;
 			ps++;
 		}
 	}
