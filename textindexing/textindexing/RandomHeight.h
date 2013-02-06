@@ -1,4 +1,8 @@
 #include "stdafx.h"
+#ifndef RANDOM_HEIGHT
+#define RANDOM_HEIGHT
+
+using namespace std;
 // Dr.Dobb's implementation
 class RandomHeight
 {
@@ -11,3 +15,4 @@ class RandomHeight
     int maxLevel;
     float probability;
 };
+#endif // RANDOM_HEIGHT

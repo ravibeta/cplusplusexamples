@@ -36,6 +36,7 @@ struct Word
 	const char* end = text.c_str();
 	int offset = 0;
 	string::const_iterator ps = text.begin();
+	int count = 0;
 	for (string::const_iterator p = text.begin(); p != text.end(); p++)
 	{
 		if ( *p == ' ' )
@@ -48,10 +49,12 @@ struct Word
 				if (!winfo)
 				{
 					winfo = new WordInfo();
+					winfo->word[0] = '\0';
 					strncpy(winfo->word, curr, end+1-curr);
-					winfo->word[end+1-curr] = 0;	
+					winfo->word[end+1-curr] = '\0';	
 					winfo->offset.push_back(curr-start);
 					winfo->freq = 1;
+					count++;
 				}
 				else
 				{
