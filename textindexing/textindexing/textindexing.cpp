@@ -26,6 +26,34 @@ struct Word
 	TCHAR tags[32];
   };
 
+	string clean(string w)
+	{
+		for (string::iterator r = w.begin(); r != w.end(); r++) *r = tolower(*r);
+		//string::iterator p = w.end();
+		//while(!(isalpha(p.) || isdigit(*p)))
+		//{
+		//	w.erase(p);
+		//	p = w.end();
+		//}
+		//string::iterator q = w.begin();
+		//while(!(isalpha(*q) || isdigit(*q)))
+		//{
+		//	w.erase(q);
+		//	q = w.begin();
+		//}
+		while(w.find(",") == w.length() - 1)
+			w.replace(w.find(","), 1, "");		
+		while(w.find(";") == w.length() - 1)
+			w.replace(w.find(";"), 1, "");
+		while(w.find(".") == w.length() - 1)
+			w.replace(w.find("."), 1, "");
+		while(w.find(".") == w.length() - 1)
+			w.replace(w.find(":"), 1, "");
+		while(w.find(" ") == w.length() - 1)
+			w.replace(w.find(" "), 1, "");
+		return w;
+	}
+
 	SkipList<string, WordInfo>* Parse(const string& text)
 	{
 	string sentinel = "zzzzzzz";
@@ -43,25 +71,17 @@ struct Word
 		{
 			if ( end > curr && end+1-curr < 32)
 			{
-				string w = text.substr(curr-start, end-curr);
-				for (string::iterator r = w.begin(); r != w.end(); r++) *r = tolower(*r);
+				string w = clean(text.substr(curr-start, end-curr));
 				string* word = &w;
-				WordInfo* winfo = skiplist->retrieve(word);
-				if (!winfo)
-				{
-					winfo = new WordInfo();
-					winfo->word[0] = '\0';
-					strncpy(winfo->word, w.c_str(), end-curr);
-					winfo->word[end-curr] = '\0';	
-					winfo->offset.push_back(curr-start);
-					winfo->freq = 1;
-					count++;
-				}
-				else
-				{
-					winfo->offset.push_back(curr-start);
-					winfo->freq++;
-				}
+
+				WordInfo* winfo = new WordInfo();
+				winfo->word[0] = '\0';
+				strncpy(winfo->word, w.c_str(), end-curr);
+				winfo->word[end-curr] = '\0';	
+				winfo->offset.push_back(curr-start);
+				winfo->freq = 1;
+				skiplist->insert(word, winfo);
+				count++;
 				curr = end;
 			}
 			else
@@ -80,6 +100,7 @@ struct Word
 	}
 	return skiplist;
 	}
+
 
 	int _tmain(int argc, _TCHAR* argv[])
 	{
