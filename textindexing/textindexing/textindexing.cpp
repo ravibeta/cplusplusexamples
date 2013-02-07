@@ -92,10 +92,10 @@ struct Word
 				{
 					winfo->freq = 1;
 					winfo->index = 0;
+					count++;
 				}
 				winfo->offset[winfo->index] = curr-start;
 				slist->insert(w, *winfo);
-				count++;
 				curr = end;
 			}
 			else
