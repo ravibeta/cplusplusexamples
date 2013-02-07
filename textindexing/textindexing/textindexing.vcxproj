@@ -78,6 +78,7 @@
     <ClInclude Include="RandomHeight.h" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="skipnode.h" />
+    <ClInclude Include="slist.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

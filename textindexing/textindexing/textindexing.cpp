@@ -5,15 +5,26 @@
 #include "skiplist.h"
 #include <string>
 #include <list>
+#include "slist.h"
 
 using namespace std;
 
-class WordInfo
+struct WordInfo
 {
-public:
 	char word[32];
 	int freq;
-	list<int> offset;
+	int offset[32];
+	int index;
+	WordInfo()
+	{
+		for(int i = 0; i < 32; i++)
+		{
+			word[i] = '\0';
+			offset[i] = '\0';
+		}
+		freq = 0;
+		index = 0;
+	}
 };
 
 struct Word
@@ -29,18 +40,6 @@ struct Word
 	string clean(string w)
 	{
 		for (string::iterator r = w.begin(); r != w.end(); r++) *r = tolower(*r);
-		//string::iterator p = w.end();
-		//while(!(isalpha(p.) || isdigit(*p)))
-		//{
-		//	w.erase(p);
-		//	p = w.end();
-		//}
-		//string::iterator q = w.begin();
-		//while(!(isalpha(*q) || isdigit(*q)))
-		//{
-		//	w.erase(q);
-		//	q = w.begin();
-		//}
 		while(w.find(",") == w.length() - 1)
 			w.replace(w.find(","), 1, "");		
 		while(w.find(";") == w.length() - 1)
@@ -54,11 +53,12 @@ struct Word
 		return w;
 	}
 
-	SkipList<string, WordInfo>* Parse(const string& text)
+
+	skiplist<string, WordInfo>* Parse(const string& text)
 	{
 	string sentinel = "zzzzzzz";
-	SkipList<string, WordInfo>* skiplist = new SkipList<string, WordInfo>((float)0.5, 6, &sentinel);
-
+	skiplist<string, WordInfo>* slist = new skiplist<string, WordInfo>(5);
+	
 	const char* start = text.c_str();
 	const char* curr = text.c_str();
 	const char* end = text.c_str();
@@ -78,15 +78,28 @@ struct Word
 				winfo->word[0] = '\0';
 				strncpy(winfo->word, w.c_str(), end-curr);
 				winfo->word[end-curr] = '\0';	
-				winfo->offset.push_back(curr-start);
-				winfo->freq = 1;
-				skiplist->insert(word, winfo);
+				WordInfo ws = slist->search(w);
+				if (ws.freq > 0 )
+				{
+					winfo->freq = ws.freq + 1;
+					for (int i = 0; i < winfo->index; i++)
+						winfo->offset[i] = ws.offset[i];
+					winfo->index = ws.index;
+					if (winfo->index < 31)
+						winfo->index++;
+				}
+				else
+				{
+					winfo->freq = 1;
+					winfo->index = 0;
+				}
+				winfo->offset[winfo->index] = curr-start;
+				slist->insert(w, *winfo);
 				count++;
 				curr = end;
 			}
 			else
 			{
-				// end++;
 				curr++;
 				ps = p;
 			}
@@ -94,19 +107,17 @@ struct Word
 		else
 		{
 			if ( curr > start && *curr == ' ') curr++;
-			// end++;
 			ps++;
 		}
 	}
-	return skiplist;
+	return slist;
 	}
-
 
 	int _tmain(int argc, _TCHAR* argv[])
 	{
 		const string stext = "Clustering and Segmentation. Clustering is a data mining technique that is directed towards the goals of identification and classification. Clustering tries to identify a finite set of categories or clusters to which each data object (tuple) can be mapped. The categories may be disjoint or overlapping and may sometimes be organized into trees. For example, one might form categories of customers into the form of a tree and then map each customer to one or more of the categories. A closely related problem is that of estimating multivariate probability density functions of all variables that could be attributes in a relation or from different relations.";
-		SkipList<string, WordInfo>* skiplist  = Parse(stext);
-		
+		skiplist<string, WordInfo>* skiplist  = Parse(stext);
+	    
 		return 0;
 	}
 
