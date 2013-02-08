@@ -17,11 +17,8 @@ struct WordInfo
 	int index;
 	WordInfo()
 	{
-		for(int i = 0; i < 32; i++)
-		{
-			word[i] = '\0';
-			offset[i] = '\0';
-		}
+		word[0] = '\0';
+		offset[0] = '\0';
 		freq = 0;
 		index = 0;
 	}
