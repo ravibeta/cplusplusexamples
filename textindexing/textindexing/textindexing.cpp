@@ -18,7 +18,7 @@ struct WordInfo
 	WordInfo()
 	{
 		word[0] = '\0';
-		offset[0] = '\0';
+		offset[0] = 0;
 		freq = 0;
 		index = 0;
 	}
