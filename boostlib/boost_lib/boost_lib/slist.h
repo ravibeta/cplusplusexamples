@@ -105,12 +105,14 @@ Tval skiplist<Tkey, Tval>::search__(link t, const Tkey key, num k) const
 #ifdef DEBUG
   std::cerr << "search__ " << t << " key=" << key << " level=" << k << std::endl;
 #endif
-
+std::cerr << "search__ " << t << " key=" << key << " level=" << k << std::endl;
   if (t == 0)                          // search failed
     return default_val_; 
 #ifdef DEBUG
   std::cerr << "key =" << key << " val = " << t->val_<< std::endl;
 #endif
+  
+  std::cerr << "key =" << key << " val = " << std::endl;
   if (key == t->key_)                 // search success
     return t->val_; 
 
@@ -124,7 +126,8 @@ Tval skiplist<Tkey, Tval>::search__(link t, const Tkey key, num k) const
  
       return search__(t, key, k-1);    // try previous level
     }
-                                       // key > x->val_
+  if (key == x->key_)
+	  return x->val_;
   return search__(x, key, k);          //   keep searching on the same level
 };
 
