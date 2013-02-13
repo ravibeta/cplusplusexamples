@@ -20,9 +20,9 @@ bool usage(int argc, char ** argv)
   std::string dir;
   if (argc >= 2)
     dir = std::string(argv[1]);
-  if (argc != 3 || dir[dir.length()-1] != '/')
+  if (argc != 3 || dir[dir.length()-1] != '\\')
   {
-    std::cout << argv[0] << " .../wordnet_dir/ word" << std::endl;
+    std::cout << argv[0] << " ...\wordnet_dir\ word" << std::endl;
 	std::cout << "Specify text in input.txt file" << std::endl;
     return true;
   }
@@ -222,12 +222,15 @@ int main(int argc, char ** argv)
   std::string wordnet_dir = argv[1];
   std::string word        = argv[2];
 
-  wordnet wn(wordnet_dir);
+  // wordnet wn(wordnet_dir);
 
   // read input file
-  std::string list = ext::read_file("input.txt");
-  skiplist<string, WordInfo>* skiplist  = Parse(list);
-  std::vector<std::string> wl        =  ext::split(list);
+  
+  std::ifstream ifs(wordnet_dir + "input.txt");
+  std::string content( (std::istreambuf_iterator<char>(ifs) ),
+                       (std::istreambuf_iterator<char>()    ) );
+  skiplist<string, WordInfo>* skiplist  = Parse(content);
+  std::vector<std::string> wl        =  ext::split(content);
   std::vector<std::string> word_list =  ext::s_unique(wl);
   std::list<std::string>* selected = new std::list<std::string>();
   for (std::size_t k = 0; k < word_list.size(); k++)

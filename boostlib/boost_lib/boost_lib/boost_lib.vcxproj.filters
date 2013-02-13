@@ -2154,6 +2154,9 @@
     <ClInclude Include="Headers\boost\config\stdlib\vacpp.hpp">
       <Filter>Header Files\boost\config\stdlib</Filter>
     </ClInclude>
+    <ClInclude Include="slist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -2171,5 +2174,8 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\input.txt" />
   </ItemGroup>
 </Project>
