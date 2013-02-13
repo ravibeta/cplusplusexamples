@@ -37,7 +37,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(LocalDebuggerWorkingDirectory)\Headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(LocalDebuggerWorkingDirectory);$(LocalDebuggerWorkingDirectory)\Headers;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

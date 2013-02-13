@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-// #include <boost/progress.hpp>
+#include <boost/progress.hpp>
 
 #include "wordnet.h"
 #include <load_wordnet.h>
@@ -28,22 +28,22 @@ bool usage(int argc, char ** argv)
   return false;
 }
 
-struct ws
+struct ws1
 {
   std::string w;
   float       s;
 
-  bool operator<(const ws& a) const {return s > a.s;}
+  bool operator<(const ws1& a) const {return s > a.s;}
 };
 
 
 /// Compute similarity of word with words in word list
-std::vector<ws>
+std::vector<ws1>
 compute_similarities(wordnet& wn,
                      const std::string& word,
                      const std::vector<std::string>& word_list)
 {
-  std::vector<ws> wslist;
+  std::vector<ws1> wslist;
   std::vector<synset> synsets1 = wn.get_synsets(word);
 
   for (unsigned i = 0; i < synsets1.size(); i++)
@@ -69,7 +69,7 @@ compute_similarities(wordnet& wn,
             max = s;
         }
       }
-      ws e = {w, max};
+      ws1 e = {w, max};
       wslist.push_back(e);
       ++show_progress;
     }
@@ -82,7 +82,7 @@ void similarity_test(wordnet&     wn,
                      const std::string& word,
                      std::vector<std::string>& word_list)
 {
-  std::vector<ws> wslist = compute_similarities(wn, word, word_list);
+  std::vector<ws1> wslist = compute_similarities(wn, word, word_list);
 
   std::stable_sort(wslist.begin(), wslist.end());
   for (unsigned i = 0; i < std::min(wslist.size(), size_t(10)); i++)

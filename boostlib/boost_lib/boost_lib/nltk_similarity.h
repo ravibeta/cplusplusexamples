@@ -5,7 +5,7 @@
 # include <queue>
 # include <boost/graph/filtered_graph.hpp>
 # include <wordnet.h>
-
+using namespace std;
 namespace wnb
 {
 
@@ -83,7 +83,7 @@ namespace wnb
       vertex u = q.front(); q.pop();
 
       int new_d = map[u] + 1;
-      for (tie(e, e_end) = out_edges(u, fg); e != e_end; ++e)
+      for (boost::tie(e, e_end) = out_edges(u, fg); e != e_end; ++e)
       {
         vertex v = target(*e,fg);
         q.push(v);

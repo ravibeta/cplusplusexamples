@@ -7,8 +7,8 @@
 #include <set>
 #include <algorithm>
 #include <stdexcept>
-//#include <boost/graph/breadth_first_search.hpp>
-//#include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/filtered_graph.hpp>
 
 namespace wnb
 {

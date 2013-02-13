@@ -8,8 +8,8 @@
 #include <stdexcept>
 #include <algorithm>
 
-//#include <boost/graph/adjacency_list.hpp>
-//#include <boost/progress.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/progress.hpp>
 
 #include "wordnet.h"
 #include "info_helper.h"

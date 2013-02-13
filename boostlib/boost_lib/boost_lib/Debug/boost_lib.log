@@ -1,18 +1,26 @@
-﻿Build started 2/11/2013 5:59:16 PM.
-     1>Project "C:\Users\admin\Downloads\boostlib\boost_lib\boost_lib\boost_lib.vcxproj" on node 2 (build target(s)).
+﻿Build started 2/12/2013 11:17:42 PM.
+     1>Project "C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\boost_lib\boost_lib.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\boost_lib.unsuccessfulbuild".
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt load_wordnet.cpp main.cpp wordnet.cpp
-         wordnet.cpp
-     1>c:\users\admin\downloads\boostlib\boost_lib\boost_lib\headers\boost\config.hpp(53): fatal error C1083: Cannot open include file: 'boost/config/platform/win32.hpp': No such file or directory
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\admin\downloads\boostlib\boost_lib\boost_lib\headers\boost\config.hpp(53): fatal error C1083: Cannot open include file: 'boost/config/platform/win32.hpp': No such file or directory
-         load_wordnet.cpp
-     1>c:\users\admin\downloads\boostlib\boost_lib\boost_lib\headers\boost\config.hpp(53): fatal error C1083: Cannot open include file: 'boost/config/platform/win32.hpp': No such file or directory
-         Generating Code...
-     1>Done Building Project "C:\Users\admin\Downloads\boostlib\boost_lib\boost_lib\boost_lib.vcxproj" (build target(s)) -- FAILED.
+     1>c:\users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\boost_lib\nltk_similarity.h(139): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\boost_lib.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.lib" /MACHINE:X86 Debug\info_helper.obj
+         Debug\load_wordnet.obj
+         Debug\main.obj
+         Debug\stdafx.obj
+         Debug\wordnet.obj
+            Creating library C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.lib and object C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.exp
+         boost_lib.vcxproj -> C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\Debug\boost_lib.exe;#1" /manifest Debug\boost_lib.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Debug\boost_lib.unsuccessfulbuild".
+         Touching "Debug\boost_lib.lastbuildstate".
+     1>Done Building Project "C:\Users\admin\gitrep\cplusplusexamples\cplusplusexamples\boostlib\boost_lib\boost_lib\boost_lib.vcxproj" (build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:05.61
+Time Elapsed 00:00:27.66
