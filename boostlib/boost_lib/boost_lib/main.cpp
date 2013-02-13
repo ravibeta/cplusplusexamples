@@ -11,10 +11,10 @@
 #include <info_helper.h>
 #include <nltk_similarity.h>
 #include <std_ext.h>
-
+#include "slist.h"
 
 using namespace wnb;
-
+using namespace std;
 bool usage(int argc, char ** argv)
 {
   std::string dir;
@@ -23,6 +23,7 @@ bool usage(int argc, char ** argv)
   if (argc != 3 || dir[dir.length()-1] != '/')
   {
     std::cout << argv[0] << " .../wordnet_dir/ word" << std::endl;
+	std::cout << "Specify text in input.txt file" << std::endl;
     return true;
   }
   return false;
@@ -35,6 +36,108 @@ struct ws1
 
   bool operator<(const ws1& a) const {return s > a.s;}
 };
+struct WordInfo
+{
+	char word[32];
+	int freq;
+	int offset[32];
+	int index;
+	WordInfo()
+	{
+		word[0] = '\0';
+		offset[0] = 0;
+		freq = 0;
+		index = 0;
+	}
+};
+
+struct Word
+{
+	TCHAR actual[64];
+	TCHAR canonical[64];
+	int offset;
+	int freq;
+	int pageno;
+	TCHAR tags[32];
+  };
+
+	string clean(string w)
+	{
+		for (string::iterator r = w.begin(); r != w.end(); r++) *r = tolower(*r);
+		while(w.find(",") == w.length() - 1)
+			w.replace(w.find(","), 1, "");		
+		while(w.find(";") == w.length() - 1)
+			w.replace(w.find(";"), 1, "");
+		while(w.find(".") == w.length() - 1)
+			w.replace(w.find("."), 1, "");
+		while(w.find(".") == w.length() - 1)
+			w.replace(w.find(":"), 1, "");
+		while(w.find(" ") == w.length() - 1)
+			w.replace(w.find(" "), 1, "");
+		return w;
+	}
+
+
+	skiplist<string, WordInfo>* Parse(const string& text)
+	{
+	string sentinel = "zzzzzzz";
+	skiplist<string, WordInfo>* slist = new skiplist<string, WordInfo>(5);
+	
+	const char* start = text.c_str();
+	const char* curr = text.c_str();
+	const char* end = text.c_str();
+	int offset = 0;
+	string::const_iterator ps = text.begin();
+	int count = 0;
+	for (string::const_iterator p = text.begin(); p != text.end(); p++, end++)
+	{
+		if ( *p == ' ' )
+		{
+			if ( end > curr && end+1-curr < 32)
+			{
+				string w = clean(text.substr(curr-start, end-curr));
+				string* word = &w;
+
+				WordInfo* winfo = new WordInfo();
+				winfo->word[0] = '\0';
+				strncpy(winfo->word, w.c_str(), end-curr);
+				winfo->word[end-curr] = '\0';	
+				WordInfo ws = slist->search(w);
+				if (ws.freq > 0 )
+				{
+					winfo->freq = ws.freq + 1;
+					for (int i = 0; i < winfo->index; i++)
+						winfo->offset[i] = ws.offset[i];
+					winfo->index = ws.index;
+					if (winfo->index < 31)
+						winfo->index++;
+				}
+				else
+				{
+					winfo->freq = 1;
+					winfo->index = 0;
+					count++;
+				}
+				winfo->offset[winfo->index] = curr-start;
+				slist->insert(w, *winfo);
+				curr = end;
+			}
+			else
+			{
+				curr++;
+				ps = p;
+			}
+		}
+		else
+		{
+			if ( curr > start && *curr == ' ') curr++;
+			ps++;
+		}
+	}
+	return slist;
+	}
+
+
 
 
 /// Compute similarity of word with words in word list
@@ -121,12 +224,25 @@ int main(int argc, char ** argv)
 
   wordnet wn(wordnet_dir);
 
-  // read test file
-  std::string list = ext::read_file("../check/list.txt");
+  // read input file
+  std::string list = ext::read_file("input.txt");
+  skiplist<string, WordInfo>* skiplist  = Parse(list);
   std::vector<std::string> wl        =  ext::split(list);
   std::vector<std::string> word_list =  ext::s_unique(wl);
+  std::list<std::string>* selected = new std::list<std::string>();
+  for (std::size_t k = 0; k < word_list.size(); k++)
+  {
+	  string s = clean(word_list[k]);
+	  WordInfo wi = skiplist->search(s);
+	  if( wi.freq > 2 && strlen(wi.word) >= 5)
+		  selected->push_back(s);
+  }
 
-  //similarity_test(wn, word, word_list);
-  batch_test(wn, word_list);
+  cout << "Index" << endl;
+  cout << "-----" << endl;
+  for (std::list<string>::iterator i = selected->begin(); i != selected->end(); i++)
+	cout << *i << endl;
+  cout << "-----" << endl;
+  
 }
 

@@ -759,6 +759,7 @@
     <ClInclude Include="load_wordnet.h" />
     <ClInclude Include="nltk_similarity.h" />
     <ClInclude Include="pos_t.h" />
+    <ClInclude Include="slist.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="std_ext.h" />
     <ClInclude Include="targetver.h" />
@@ -770,6 +771,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="wordnet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\input.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
