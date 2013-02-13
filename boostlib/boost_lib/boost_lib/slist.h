@@ -121,8 +121,7 @@ Tval skiplist<Tkey, Tval>::search__(link t, const Tkey key, num k) const
     {
       if (k==0)                        // no more levels available
 	return default_val_;
-	  if (key == x->key_)                 // search success
-		return x->val_; 
+ 
       return search__(t, key, k-1);    // try previous level
     }
                                        // key > x->val_
