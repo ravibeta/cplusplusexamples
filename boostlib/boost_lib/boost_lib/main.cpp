@@ -297,7 +297,7 @@ int main(int argc, char ** argv)
   cout << "Index" << endl;
   cout << "-----" << endl;
     for(CI p = final.begin(); p != final.end(); p++)
-	  if (count > 0 && p->second > (sum / count))
+	  if (count > 0 && p->second >= (sum / count))
 		  cout << p->first << endl;
   cout << "-----" << endl;
   
