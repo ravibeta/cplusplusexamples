@@ -219,6 +219,7 @@ map<string, double> ClassifierAndDecisionTree (vector<string>& v, wordnet& wn )
 {
 	nltk_similarity nltk(wn);
 	map<string, double> m;
+	vector<string> result;
 
 	double*  distances = new double[v.size() * v.size()];
 	if (!distances) return m;
@@ -231,18 +232,17 @@ map<string, double> ClassifierAndDecisionTree (vector<string>& v, wordnet& wn )
 		{
 			std::vector<wnb::synset> settwo = wn.get_synsets(v[j]);
 
-			if ( i == j )
-				*(distances + (i*v.size() + j)*sizeof(double)) = 0;
-			
-			if ( setone.size() == 0 || settwo.size() == 0)
-				*(distances + (i*v.size() + j)*sizeof(double)) = 0;
+			if ( i == j  || setone.size() == 0 || settwo.size() == 0)
+			{
+				distances[i*v.size() + j] = 0;
+				continue;
+			}
 
-			*(distances + (i*v.size() + j)*sizeof(double)) = nltk.shortest_path_distance(setone[0], settwo[0]);
+			distances[i*v.size() + j] = nltk.shortest_path_distance(setone[0], settwo[0]);
 
 			// normalize and group
-			double c = ceil((double)(*(distances + (i*v.size() + j)*sizeof(double))));
-			*(distances + (i*v.size() + j)*sizeof(double)) = c;
-			sum += *(distances + (i*v.size() + j)*sizeof(double));
+			distances[i*v.size() + j] = ceil(distances[i*v.size() + j]);
+			sum += distances[i*v.size() + j];
 
 		}
 		m[v[i]] = sum;
@@ -296,9 +296,9 @@ int main(int argc, char ** argv)
   
   cout << "Index" << endl;
   cout << "-----" << endl;
-  for (std::vector<string>::iterator i = selected->begin(); i != selected->end(); i++)
-	  if (count > 0 && final[*i] > (sum / count))
-		  cout << *i << endl;
+    for(CI p = final.begin(); p != final.end(); p++)
+	  if (count > 0 && p->second > (sum / count))
+		  cout << p->first << endl;
   cout << "-----" << endl;
   
 }
