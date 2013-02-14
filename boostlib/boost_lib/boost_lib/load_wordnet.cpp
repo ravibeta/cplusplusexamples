@@ -253,7 +253,7 @@ namespace wnb
     {
       load_wordnet_data((dn + "data." + cat), wn, info);
       load_wordnet_index((dn + "index." + cat), wn, info);
-      load_wordnet_exc(dn, cat, wn, info);
+      // load_wordnet_exc(dn, cat, wn, info);
     }
 
   } // end of anonymous namespace

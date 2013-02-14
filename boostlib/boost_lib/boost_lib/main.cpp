@@ -12,6 +12,7 @@
 #include <nltk_similarity.h>
 #include <std_ext.h>
 #include "slist.h"
+#include <cmath>
 
 using namespace wnb;
 using namespace std;
@@ -101,7 +102,7 @@ struct Word
 				WordInfo* winfo = new WordInfo();
 				winfo->word[0] = '\0';
 				strncpy(winfo->word, w.c_str(), end-curr);
-				winfo->word[end-curr] = '\0';	
+				winfo->word[end-curr] = '\0';
 				WordInfo ws = slist->search(w);
 				if (ws.freq > 0 )
 				{
@@ -213,6 +214,45 @@ void batch_test(wordnet& wn,
   }
 }
 
+
+map<string, double> ClassifierAndDecisionTree (vector<string>& v, wordnet& wn )
+{
+	nltk_similarity nltk(wn);
+	map<string, double> m;
+
+	double*  distances = new double[v.size() * v.size()];
+	if (!distances) return m;
+
+	for (int i = 0; i < v.size(); i++)
+	{
+		double sum = 0;
+		std::vector<wnb::synset> setone =  wn.get_synsets(v[i]);		
+		for (int j = 0; j < v.size(); j++)
+		{
+			std::vector<wnb::synset> settwo = wn.get_synsets(v[j]);
+
+			if ( i == j )
+				*(distances + (i*v.size() + j)*sizeof(double)) = 0;
+			
+			if ( setone.size() == 0 || settwo.size() == 0)
+				*(distances + (i*v.size() + j)*sizeof(double)) = 0;
+
+			*(distances + (i*v.size() + j)*sizeof(double)) = nltk.shortest_path_distance(setone[0], settwo[0]);
+
+			// normalize and group
+			double c = ceil((double)(*(distances + (i*v.size() + j)*sizeof(double))));
+			*(distances + (i*v.size() + j)*sizeof(double)) = c;
+			sum += *(distances + (i*v.size() + j)*sizeof(double));
+
+		}
+		m[v[i]] = sum;
+		
+	}
+	return m;
+
+}
+
+
 int main(int argc, char ** argv)
 {
   if (usage(argc, argv))
@@ -222,7 +262,7 @@ int main(int argc, char ** argv)
   std::string wordnet_dir = argv[1];
   std::string word        = argv[2];
 
-  // wordnet wn(wordnet_dir);
+  wordnet wn(wordnet_dir);
 
   // read input file
   
@@ -232,20 +272,33 @@ int main(int argc, char ** argv)
   skiplist<string, WordInfo>* skiplist  = Parse(content);
   std::vector<std::string> wl        =  ext::split(content);
   std::vector<std::string> word_list =  ext::s_unique(wl);
-  std::list<std::string>* selected = new std::list<std::string>();
+  std::vector<std::string>* selected = new std::vector<std::string>();
   for (std::size_t k = 0; k < word_list.size(); k++)
   {
 	  string s = clean(word_list[k]);
 	  WordInfo wi = skiplist->search(s);
-	  if( wi.freq > 2 && strlen(wi.word) >= 5)
+	  if( wi.freq > 1 && strlen(wi.word) >= 5)
 		  selected->push_back(s);
   }
 
+  map<string, double> final;
+  if (selected->size() > 1)
+	  final = ClassifierAndDecisionTree(*selected, wn);
+
+  double sum = 0;
+  int count = 0;
+  typedef map<string, double>::const_iterator CI;
+  for(CI p = final.begin(); p != final.end(); p++)
+  {
+		  sum += p->second;
+		  count++;
+  }
+  
   cout << "Index" << endl;
   cout << "-----" << endl;
-  for (std::list<string>::iterator i = selected->begin(); i != selected->end(); i++)
-	cout << *i << endl;
+  for (std::vector<string>::iterator i = selected->begin(); i != selected->end(); i++)
+	  if (count > 0 && final[*i] > (sum / count))
+		  cout << *i << endl;
   cout << "-----" << endl;
   
 }
-
