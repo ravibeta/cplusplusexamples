@@ -273,7 +273,7 @@ int main(int argc, char ** argv)
   std::string wordnet_dir = argv[1];
   std::string word        = argv[2];
 
-  // wordnet wn(wordnet_dir);
+  wordnet wn(wordnet_dir);
 
   // read input file
   
@@ -293,13 +293,13 @@ int main(int argc, char ** argv)
   }
 
   map<string, double> final;
-  // if (selected->size() > 1)
-	  // final = ClassifierAndDecisionTree(*selected, wn);
+  if (selected->size() > 1)
+	 final = ClassifierAndDecisionTree(*selected, wn);
 
   double sum = 0;
   int count = 0;
   typedef map<string, double>::const_iterator CI;
-  /*for(CI p = final.begin(); p != final.end(); p++)
+  for(CI p = final.begin(); p != final.end(); p++)
   {
 		  sum += p->second;
 		  count++;
@@ -311,5 +311,5 @@ int main(int argc, char ** argv)
 	  if (count > 0 && p->second >= (sum / count))
 		  cout << p->first << endl;
   cout << "-----" << endl;
-  */
+  
 }
