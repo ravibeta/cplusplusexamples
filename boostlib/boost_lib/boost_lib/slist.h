@@ -52,6 +52,9 @@ template <typename Tkey, typename Tval>
     // insert the new node pointed by link x with level k
     void insert__(link t, link x, num k);
 
+	// print all nodes
+	void dump__(link t);
+
   public: 
     
     skiplist(num lgNmax = 5) : 
@@ -79,6 +82,10 @@ template <typename Tkey, typename Tval>
     
     inline void remove(Tkey key)
     { remove__(head_, key, lgN_-1); }
+
+
+	inline void dump()
+	{ return dump__(head_); }
 
   };
 /////////////////// PRIVATE //////////////////////
@@ -232,6 +239,17 @@ void skiplist<Tkey, Tval>::remove_all__(link t, num k)
   remove_all__(t->next_[k], k);// try to remove in the same level
 };
 
+
+template <typename Tkey, typename Tval>
+void skiplist<Tkey, Tval>::dump__(link t) 
+{
+  
+  if (t==0) return;
+  std::cerr << "dump__ " << t->val_ <<std::endl;
+
+  link x = t->next_[0];  
+  dump__(t->next_[0]);// try to print in the same level
+};
 
 
 /////////////////// PUBLIC ///////////////////////
