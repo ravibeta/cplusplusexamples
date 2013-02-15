@@ -143,9 +143,9 @@ struct Word
 			ps++;
 		}
 	}
-#ifdef DEBUG
+// #ifdef DEBUG
 	slist->dump();
-#endif
+// #endif
 	return slist;
 	}
 

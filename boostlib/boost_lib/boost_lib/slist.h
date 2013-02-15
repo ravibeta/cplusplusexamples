@@ -53,7 +53,7 @@ template <typename Tkey, typename Tval>
     void insert__(link t, link x, num k);
 
 	// print all nodes
-	void dump__(link t);
+	void dump__(link t, num k);
 
   public: 
     
@@ -85,7 +85,7 @@ template <typename Tkey, typename Tval>
 
 
 	inline void dump()
-	{ return dump__(head_); }
+	{ return dump__(head_, lgN_); }
 
   };
 /////////////////// PRIVATE //////////////////////
@@ -223,6 +223,8 @@ void skiplist<Tkey, Tval>::remove_all__(link t, num k)
   if (t==0) return;
   link x = t->next_[k];
   
+  if (x == 0) return;
+
   if (x!=0)
     {
       t->next_[k] = x->next_[k];   //   remove
@@ -241,14 +243,25 @@ void skiplist<Tkey, Tval>::remove_all__(link t, num k)
 
 
 template <typename Tkey, typename Tval>
-void skiplist<Tkey, Tval>::dump__(link t) 
+void skiplist<Tkey, Tval>::dump__(link t, num k) 
 {
   
   if (t==0) return;
-  std::cerr << "dump__ " << t->val_ <<std::endl;
+  std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
 
-  link x = t->next_[0];  
-  dump__(t->next_[0]);// try to print in the same level
+  link x = t->next_[k];  
+  if (x==0)
+    {
+      
+      if (k==0)                    
+	{                          
+	  std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
+	  return;
+	}
+      dump__(t, k-1);   // try to remove one level below
+    }
+
+  dump__(t->next_[k], k);// try to print in the same level
 };
 
 
