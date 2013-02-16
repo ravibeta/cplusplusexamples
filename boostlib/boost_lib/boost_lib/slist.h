@@ -36,6 +36,7 @@ template <typename Tkey, typename Tval>
     
     num lgN_;              // current number of link in skiplist
     num lgNmax_;           // max number of link in skiplist
+	int count;             // number of nodes
     
     // random skiplist expansion
     num rand_sl_gen__();     
@@ -58,7 +59,7 @@ template <typename Tkey, typename Tval>
   public: 
     
     skiplist(num lgNmax = 5) : 
-      head_(new node(default_key_, default_val_, lgNmax+1)), 
+      head_(new node(default_key_, default_val_, lgNmax+1)), count(0),
       lgN_(0), lgNmax_(lgNmax) {}; 
 
     // TODO
@@ -142,10 +143,10 @@ Tval skiplist<Tkey, Tval>::search__(link t, const Tkey key, num k) const
 template <typename Tkey, typename Tval>
 void skiplist<Tkey, Tval>::insert__(link t, link x, num k) 
 {
-#ifdef DEBUG
+ #ifdef DEBUG
   std::cerr << "insert__ " << t << " " << x << " level=" << k 
   	    << " key=" << x->key_ << " value=" << x->val_ << std::endl;
-#endif
+ #endif
 
   Tkey key = x->key_;      // current key
   link tk  = t->next_[k];  // link to next level current link
@@ -157,10 +158,11 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
 	{                  //   insert:
 	  x->next_[k] = tk;//    new node's successor is tk
 	  t->next_[k] = x; //    t'successor is x
-#ifdef DEBUG
+	  count++;
+// #ifdef DEBUG
 	    std::cerr << "\tdone inserted key=" << key 
 		      << " value=" << x->val_ <<std::endl;
-#endif
+// #endif
 	}
       if (k==0)             // level 0 
 	return;             //   return
@@ -244,23 +246,13 @@ void skiplist<Tkey, Tval>::remove_all__(link t, num k)
 
 template <typename Tkey, typename Tval>
 void skiplist<Tkey, Tval>::dump__(link t, num k) 
-{
-  
+{  
   if (t==0) return;
+#ifdef DEBUG
   std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
-
+#endif
+  k = 0;
   link x = t->next_[k];  
-  if (x==0)
-    {
-      
-      if (k==0)                    
-	{                          
-	  std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
-	  return;
-	}
-      dump__(t, k-1);   // try to remove one level below
-    }
-
   dump__(t->next_[k], k);// try to print in the same level
 };
 
