@@ -159,10 +159,10 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
 	  x->next_[k] = tk;//    new node's successor is tk
 	  t->next_[k] = x; //    t'successor is x
 	  count++;
-// #ifdef DEBUG
+#ifdef DEBUG
 	    std::cerr << "\tdone inserted key=" << key 
 		      << " value=" << x->val_ <<std::endl;
-// #endif
+#endif
 	}
       if (k==0)             // level 0 
 	return;             //   return
