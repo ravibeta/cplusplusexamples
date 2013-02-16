@@ -143,9 +143,9 @@ struct Word
 			ps++;
 		}
 	}
-#ifdef DEBUG
+ #ifdef DEBUG
 	slist->dump();
-#endif
+ #endif
 	return slist;
 	}
 
@@ -294,7 +294,7 @@ int main(int argc, char ** argv)
 
   map<string, double> final;
   if (selected->size() > 1)
-	 final = ClassifierAndDecisionTree(*selected, wn);
+	  final = ClassifierAndDecisionTree(*selected, wn);
 
   double sum = 0;
   int count = 0;
