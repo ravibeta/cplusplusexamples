@@ -17,9 +17,10 @@ template <typename Tkey, typename Tval>
       Tval val_;           // the val
       num size_;           // size of array   
       node **next_;        // array of pointers
+	  bool visited;
 
       node(const Tkey key, const Tval val, num size) :
-	key_(key), val_(val), size_(size), next_(new node*[size_])
+	key_(key), val_(val), size_(size), next_(new node*[size_]), visited(false)
       { for ( num i = 0 ; i < size_; ++i) next_[i] = 0; 
 	//std::cerr << "\t Created node key="<< key 
 	//	  << " val=" << val << " num_links=" << size 
@@ -37,7 +38,8 @@ template <typename Tkey, typename Tval>
     num lgN_;              // current number of link in skiplist
     num lgNmax_;           // max number of link in skiplist
 	int count;             // number of nodes
-    
+	int index;
+
     // random skiplist expansion
     num rand_sl_gen__();     
 
@@ -56,10 +58,12 @@ template <typename Tkey, typename Tval>
 	// print all nodes
 	void dump__(link t, num k);
 
+	void dumped__(link t);
+
   public: 
     
     skiplist(num lgNmax = 5) : 
-      head_(new node(default_key_, default_val_, lgNmax+1)), count(0),
+      head_(new node(default_key_, default_val_, lgNmax+1)), count(0), index(0),
       lgN_(0), lgNmax_(lgNmax) {}; 
 
     // TODO
@@ -87,6 +91,9 @@ template <typename Tkey, typename Tval>
 
 	inline void dump()
 	{ return dump__(head_, lgN_); }
+
+	inline void dumped()
+	{ return dumped__(head_); }
 
   };
 /////////////////// PRIVATE //////////////////////
@@ -158,14 +165,16 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
 	{                  //   insert:
 	  x->next_[k] = tk;//    new node's successor is tk
 	  t->next_[k] = x; //    t'successor is x
-	  count++;
 #ifdef DEBUG
 	    std::cerr << "\tdone inserted key=" << key 
 		      << " value=" << x->val_ <<std::endl;
 #endif
 	}
       if (k==0)             // level 0 
-	return;             //   return
+	  {
+		  count++;
+		  return;             //   return
+	  }
 
                             // k >= x->size__
       insert__(t, x, k-1);  //  insert down a level
@@ -247,14 +256,44 @@ void skiplist<Tkey, Tval>::remove_all__(link t, num k)
 template <typename Tkey, typename Tval>
 void skiplist<Tkey, Tval>::dump__(link t, num k) 
 {  
-  if (t==0) return;
+  if (t==0) 
+	  return;
 #ifdef DEBUG
   std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
 #endif
-  k = 0;
-  link x = t->next_[k];  
+
+  if ( k > t->size_ )
+	  return;
+  link x = t->next_[k];
+    std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
+  index++;
+  if ( x == 0 )
+  { 
+	 if (k == 0)
+		 return;
+	 dump__(t, k - 1);
+	 return;
+  }
   dump__(t->next_[k], k);// try to print in the same level
 };
 
+template <typename Tkey, typename Tval>
+void skiplist<Tkey, Tval>::dumped__(link t) 
+{  
+  if (t==0) 
+	  return;
+  for(int i = lgN_; i >= 0; i--)
+  {
+	  if ( i < t->size_ && t->visited == false)
+	  {
+		  std::cerr << "dumped__ " << t->val_ <<std::endl;
+		  index++;
+		  if ( i == 0)
+			  t->visited = true; 
+		  link x = t->next_[i];
+		  dumped__(x);
+	  }
+  }
+};
 
 /////////////////// PUBLIC ///////////////////////
