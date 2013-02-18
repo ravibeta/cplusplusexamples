@@ -290,9 +290,9 @@ void skiplist<Tkey, Tval>::dumpall__(link t, num k)
   if (t==0) return;
   link x = t->next_[k];
   
-  if (x == 0) return;
+  // if (x == 0) return;
 
-  if (x!=0)
+  if (x==0)
     {      
       if (k==0)
 	  {
@@ -300,10 +300,20 @@ void skiplist<Tkey, Tval>::dumpall__(link t, num k)
 		  return;
 	  }
       dumpall__(t, k-1);
+	    if (k != 1)
+			dumpall__(t->next_[0], 0);
+	 // for (node* r = t; r && k != 1; r = t->next_[0])
+		//std::cerr << "dumpall__ " << r->val_ << "level " << 0 <<std::endl;
+	 // return;
+
     }
 
-  dumpall__(t->next_[k], k); 
-
+  dumpall__(t->next_[k], k);
+  //if (k != 0)
+	 // dumpall__(t->next_[0], 0);
+  /*for (node* r = t; r && k != 0; r = t->next_[0])
+	std::cerr << "dumpall__ " << r->val_ << "level " << 0 <<std::endl;*/
+  std::cerr << "dumpall__ " << t->val_ << "level " << k <<std::endl;
 };
 
 template <typename Tkey, typename Tval>
