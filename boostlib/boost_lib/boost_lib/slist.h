@@ -60,6 +60,8 @@ template <typename Tkey, typename Tval>
 
 	void dumped__(link t);
 
+	void dumpall__(link t, num k);
+
   public: 
     
     skiplist(num lgNmax = 5) : 
@@ -94,6 +96,11 @@ template <typename Tkey, typename Tval>
 
 	inline void dumped()
 	{ return dumped__(head_); }
+
+	inline void dumpall()
+	{
+		return dumpall__(head_, lgN_);
+	}
 
   };
 /////////////////// PRIVATE //////////////////////
@@ -275,6 +282,28 @@ void skiplist<Tkey, Tval>::dump__(link t, num k)
 	 return;
   }
   dump__(t->next_[k], k);// try to print in the same level
+};
+
+template <typename Tkey, typename Tval>
+void skiplist<Tkey, Tval>::dumpall__(link t, num k)
+{
+  if (t==0) return;
+  link x = t->next_[k];
+  
+  if (x == 0) return;
+
+  if (x!=0)
+    {      
+      if (k==0)
+	  {
+		  std::cerr << "dumpall__ " << t->val_ << "level " << k <<std::endl;
+		  return;
+	  }
+      dumpall__(t, k-1);
+    }
+
+  dumpall__(t->next_[k], k); 
+
 };
 
 template <typename Tkey, typename Tval>
