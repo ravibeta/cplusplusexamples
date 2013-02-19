@@ -69,7 +69,9 @@ template <typename Tkey, typename Tval>
       lgN_(0), lgNmax_(lgNmax) {}; 
 
     // TODO
-    ~skiplist(){ remove_all__(head_, lgN_);};
+    ~skiplist(){ 
+		remove_all__(head_, lgN_);
+	};
 
     // search a key and get a val
     //   start from head_ and current level reached lgN_
@@ -100,6 +102,11 @@ template <typename Tkey, typename Tval>
 	inline void dumpall()
 	{
 		return dumpall__(head_, lgN_);
+	}
+
+	inline void removeall()
+	{
+		return remove_all__(head_, lgN_);
 	}
 
   };
@@ -232,31 +239,39 @@ void skiplist<Tkey, Tval>::remove__(link t, Tkey key, num k)
 
 
 template <typename Tkey, typename Tval>
-void skiplist<Tkey, Tval>::remove_all__(link t, num k) 
+bool skiplist<Tkey, Tval>::remove_all__(link t, num k) 
 {
 #ifdef DEBUG
   std::cerr << "remove__ " << t << " level=" 
 	    << k <<std::endl;
 #endif
-  if (t==0) return;
-  link x = t->next_[k];
+    if (t==0) return true;
+  link x = t->next_[k];  
   
-  if (x == 0) return;
-
-  if (x!=0)
-    {
-      t->next_[k] = x->next_[k];   //   remove
-      
-      if (k==0)                    // can delete
-	{                          //   no more links in level
-	  delete x; 
-	  return;
-	}
-      remove_all__(t, k-1);   // try to remove one level below
+  if (x == 0)
+    {	
+      if (k == 0)
+	  {
+		  std::cerr << "remove_all__ " << t->val_ << "level " << k <<std::endl;
+		  delete t;
+		  return true;
+	  }
+      return remove_all__(t, k-1);
+	    if (k != 1)
+			return remove_all__(t->next_[0], 0);
     }
-  // x->key_ >= key
 
-  remove_all__(t->next_[k], k);// try to remove in the same level
+  if (remove_all__(t->next_[k], k))
+  {
+	  if (k == 0)
+	  {
+		  std::cerr << "remove_all__ " << t->val_ << "level " << k <<std::endl;
+		  delete t;
+		  return true;
+	  }
+  }
+  else
+	  return false;  
 };
 
 
@@ -302,17 +317,9 @@ void skiplist<Tkey, Tval>::dumpall__(link t, num k)
       dumpall__(t, k-1);
 	    if (k != 1)
 			dumpall__(t->next_[0], 0);
-	 // for (node* r = t; r && k != 1; r = t->next_[0])
-		//std::cerr << "dumpall__ " << r->val_ << "level " << 0 <<std::endl;
-	 // return;
-
     }
 
   dumpall__(t->next_[k], k);
-  //if (k != 0)
-	 // dumpall__(t->next_[0], 0);
-  /*for (node* r = t; r && k != 0; r = t->next_[0])
-	std::cerr << "dumpall__ " << r->val_ << "level " << 0 <<std::endl;*/
   std::cerr << "dumpall__ " << t->val_ << "level " << k <<std::endl;
 };
 
