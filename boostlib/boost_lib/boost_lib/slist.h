@@ -47,7 +47,7 @@ template <typename Tkey, typename Tval>
     void remove__(link t, Tkey key, num k);
 
     // remove all keys
-    void remove_all__(link t, num k);
+    bool remove_all__(link t, num k);
 
     // search a key, given a link and the current level
     Tval search__(link t, const Tkey key, num k) const;
@@ -104,7 +104,7 @@ template <typename Tkey, typename Tval>
 		return dumpall__(head_, lgN_);
 	}
 
-	inline void removeall()
+	inline bool removeall()
 	{
 		return remove_all__(head_, lgN_);
 	}
