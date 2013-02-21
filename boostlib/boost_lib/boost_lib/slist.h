@@ -248,7 +248,10 @@ bool skiplist<Tkey, Tval>::remove_all__(link t, num k)
     if (t==0) return true;
   link x = t->next_[k];  
   
-  if (x == 0)
+
+  if (remove_all__(t->next_[k], k))
+  {
+	if (x == 0)
     {	
       if (k == 0)
 	  {
@@ -256,19 +259,9 @@ bool skiplist<Tkey, Tval>::remove_all__(link t, num k)
 		  delete t;
 		  return true;
 	  }
-      return remove_all__(t, k-1);
-	    if (k != 1)
-			return remove_all__(t->next_[0], 0);
+      return (remove_all__(t, k-1));
     }
-
-  if (remove_all__(t->next_[k], k))
-  {
-	  if (k == 0)
-	  {
-		  std::cerr << "remove_all__ " << t->val_ << "level " << k <<std::endl;
-		  delete t;
-		  return true;
-	  }
+	return true;
   }
   else
 	  return false;  
