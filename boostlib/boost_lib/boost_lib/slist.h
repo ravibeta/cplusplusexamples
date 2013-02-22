@@ -143,7 +143,9 @@ template <typename Tkey, typename Tval>
 			if ( i < lgNmax_)
 			{
 				n->next_[i] = ret[i]->next_[i];
+#ifdef DEBUG
 				std::cerr << "insertIter" << n->val_  << "level " << i << "next " << ret[i]->next_[i] << std::endl;
+#endif
 				ret[i]->next_[i] = n;
 			}
 		}
@@ -269,9 +271,9 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
     {
       if (k < x->size_)    // is curr lev allowed for this node?
 	{                  //   insert:
-// #ifdef DEBUG
+#ifdef DEBUG
 		std::cerr << "insert__" << x->val_  << "level " << k << "next " << tk << std::endl;
-// #endif
+#endif
 		x->next_[k] = tk;//    new node's successor is tk
 		t->next_[k] = x; //    t'successor is x  
 
@@ -343,7 +345,9 @@ bool skiplist<Tkey, Tval>::remove_all__(link t, num k)
     {	
       if (k == 0)
 	  {
+#ifdef DEBUG
 		  std::cerr << "remove_all__ " << t->val_ << "level " << k <<std::endl;
+#endif
 		  delete t;
 		  return true;
 	  }
