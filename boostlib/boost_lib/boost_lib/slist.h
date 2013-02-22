@@ -52,6 +52,9 @@ template <typename Tkey, typename Tval>
     // search a key, given a link and the current level
     Tval search__(link t, const Tkey key, num k) const;
 
+    // search a key, given a link and the current level
+    void* searchnode__(link t, const Tkey key, num k);
+
     // insert the new node pointed by link x with level k
     void insert__(link t, link x, num k);
 
@@ -86,27 +89,85 @@ template <typename Tkey, typename Tval>
     //   current level is lgN_
     //
     inline void insert(const Tkey key, const Tval val) 
-    { return insert__(head_, new node(key, val, rand_sl_gen__()), lgN_); };
+    { 
+		node* n = (node*)searchnode__(head_, key, lgN_);
+		if(n)
+			n->val_ = val;
+		else
+			insert__(head_, new node(key, val, rand_sl_gen__()), lgN_); 
+	};
 
     
     inline void remove(Tkey key)
     { remove__(head_, key, lgN_-1); }
 
 
-	inline void dump()
-	{ return dump__(head_, lgN_); }
-
-	inline void dumped()
-	{ return dumped__(head_); }
-
-	inline void dumpall()
-	{
-		return dumpall__(head_, lgN_);
-	}
 
 	inline bool removeall()
 	{
 		return remove_all__(head_, lgN_);
+	}
+
+	inline node** updateTable(Tkey key)
+	{
+		node* current = head_;
+		node** ret = new node*[lgNmax_] ();
+		if ( ret != NULL)
+			for (int i = head_->size_ - 1; i >= 0; i--)
+			{
+				while(current->next_[i] && current->next_[i]->key_ < key && current->key_ < current->next_[i]->key_)
+					current = current->next_[i];
+				ret[i] = current;
+
+			}
+		return ret;
+	}
+
+	inline void insertIter(const Tkey key, const Tval val) 
+    { 
+		node** ret = updateTable(key);
+		if (!ret) return;
+		node* cur = ret[0];
+		if (cur->next_[0] && cur->next_[0]->key_ == key && cur->key_ < cur->next_[0]->key_)
+		{
+			cur->next_[0]->val_ = val;
+			// std::cerr << "insertIter update val" << n->val_  << std::endl;
+			return;
+		}
+
+		node* n  = new node(key, val, rand_sl_gen__());
+		if (!n) return;
+		// for (int i = 0; i < n->size_; i++)
+		for (int i = n->size_ - 1; i >=0 ; i--)
+		{
+			if ( i < lgNmax_)
+			{
+				n->next_[i] = ret[i]->next_[i];
+				std::cerr << "insertIter" << n->val_  << "level " << i << "next " << ret[i]->next_[i] << std::endl;
+				ret[i]->next_[i] = n;
+			}
+		}
+	}
+
+	    
+	inline Tval searchIter(const Tkey key) 
+    {  
+	    node** ret = updateTable(key);
+		if (ret[0] && ret[0]->next_[0] && ret[0]->next_[0]->key_ == key)
+			return ret[0]->next_[0]->val_;
+		return default_val_; 
+	};
+
+	inline void dumpIter()
+	{
+		node* cur = head_;
+		while(cur->next_[0])
+		{
+// #ifdef DEBUG
+			std::cerr << "dump__ " << cur->val_ <<std::endl;
+// #endif
+			cur = cur->next_[0];
+		}
 	}
 
   };
@@ -153,9 +214,38 @@ Tval skiplist<Tkey, Tval>::search__(link t, const Tkey key, num k) const
  
       return search__(t, key, k-1);    // try previous level
     }
-  if (key == x->key_)
-	  return x->val_;
   return search__(x, key, k);          //   keep searching on the same level
+};
+
+// search skip list given the entry link, the key and the current level
+template <typename Tkey, typename Tval>
+void* skiplist<Tkey, Tval>::searchnode__(link t, const Tkey key, num k) 
+{
+#ifdef DEBUG
+  std::cerr << "searchnode__ " << t << " key=" << key << " level=" << k << std::endl;
+#endif
+  if (t == 0)                          // search failed
+    return t; 
+#ifdef DEBUG
+  std::cerr << "key =" << key << " val = " << t->val_<< std::endl;
+#endif
+  
+  if (key == t->key_)                 // search success
+    return t; 
+
+  link x = t->next_[k];                // link to the next level
+
+  if ((x == 0) ||                      //   null?
+      (key <= x->key_))                 //   search key < next level link's key
+	{
+		if ( x && key == x->key_)
+			return x;
+		if (k==0)                        // no more levels available
+			return NULL;
+ 
+		return searchnode__(t, key, k-1);    // try previous level
+	}
+  return searchnode__(x, key, k);          //   keep searching on the same level
 };
 
 //
@@ -168,17 +258,23 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
   std::cerr << "insert__ " << t << " " << x << " level=" << k 
   	    << " key=" << x->key_ << " value=" << x->val_ << std::endl;
  #endif
-
+  /*if (head_->size_ < x->size_)
+	    std::cerr << "mistake" << " value=" << t->val_ << std::endl;*/
   Tkey key = x->key_;      // current key
-  link tk  = t->next_[k];  // link to next level current link
+
+  link tk  = t->next_[k];  // link to next level current link  
   
   if ((tk == 0) ||         //   null?
       ( key < tk->key_))   //   search key < next level link's key
     {
       if (k < x->size_)    // is curr lev allowed for this node?
 	{                  //   insert:
-	  x->next_[k] = tk;//    new node's successor is tk
-	  t->next_[k] = x; //    t'successor is x
+// #ifdef DEBUG
+		std::cerr << "insert__" << x->val_  << "level " << k << "next " << tk << std::endl;
+// #endif
+		x->next_[k] = tk;//    new node's successor is tk
+		t->next_[k] = x; //    t'successor is x  
+
 #ifdef DEBUG
 	    std::cerr << "\tdone inserted key=" << key 
 		      << " value=" << x->val_ <<std::endl;
@@ -188,19 +284,11 @@ void skiplist<Tkey, Tval>::insert__(link t, link x, num k)
 	  {
 		  count++;
 		  return;             //   return
-	  }
-
-                            // k >= x->size__
+	  }                            // k >= x->size__
       insert__(t, x, k-1);  //  insert down a level
       return;               //  return
-    }
+    }                       // k > tk->key_
 
-  if (key == tk->key_)
-  {
-	  tk->val_ = x->val_; // update existing entry
-	  return;
-  }
-                            // k > tk->key_
   insert__(tk, x, k);       //   stay in the same level
 };
 
@@ -268,71 +356,5 @@ bool skiplist<Tkey, Tval>::remove_all__(link t, num k)
 };
 
 
-template <typename Tkey, typename Tval>
-void skiplist<Tkey, Tval>::dump__(link t, num k) 
-{  
-  if (t==0) 
-	  return;
-#ifdef DEBUG
-  std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
-#endif
-
-  if ( k > t->size_ )
-	  return;
-  link x = t->next_[k];
-    std::cerr << "dump__ " << t->val_ << "level " << k <<std::endl;
-  index++;
-  if ( x == 0 )
-  { 
-	 if (k == 0)
-		 return;
-	 dump__(t, k - 1);
-	 return;
-  }
-  dump__(t->next_[k], k);// try to print in the same level
-};
-
-template <typename Tkey, typename Tval>
-void skiplist<Tkey, Tval>::dumpall__(link t, num k)
-{
-  if (t==0) return;
-  link x = t->next_[k];
-  
-  // if (x == 0) return;
-
-  if (x==0)
-    {      
-      if (k==0)
-	  {
-		  std::cerr << "dumpall__ " << t->val_ << "level " << k <<std::endl;
-		  return;
-	  }
-      dumpall__(t, k-1);
-	    if (k != 1)
-			dumpall__(t->next_[0], 0);
-    }
-
-  dumpall__(t->next_[k], k);
-  std::cerr << "dumpall__ " << t->val_ << "level " << k <<std::endl;
-};
-
-template <typename Tkey, typename Tval>
-void skiplist<Tkey, Tval>::dumped__(link t) 
-{  
-  if (t==0) 
-	  return;
-  for(int i = lgN_; i >= 0; i--)
-  {
-	  if ( i < t->size_ && t->visited == false)
-	  {
-		  std::cerr << "dumped__ " << t->val_ <<std::endl;
-		  index++;
-		  if ( i == 0)
-			  t->visited = true; 
-		  link x = t->next_[i];
-		  dumped__(x);
-	  }
-  }
-};
 
 /////////////////// PUBLIC ///////////////////////
