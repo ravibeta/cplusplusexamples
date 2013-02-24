@@ -331,32 +331,18 @@ void skiplist<Tkey, Tval>::remove__(link t, Tkey key, num k)
 template <typename Tkey, typename Tval>
 bool skiplist<Tkey, Tval>::remove_all__(link t, num k) 
 {
-#ifdef DEBUG
-  std::cerr << "remove__ " << t << " level=" 
-	    << k <<std::endl;
-#endif
-    if (t==0) return true;
-  link x = t->next_[k];  
-  
 
-  if (remove_all__(t->next_[k], k))
-  {
-	if (x == 0)
-    {	
-      if (k == 0)
-	  {
+		node* cur = head_;
+		while(cur)
+		{
+			node* next = cur->next_[0];
+			delete cur;
 #ifdef DEBUG
-		  std::cerr << "remove_all__ " << t->val_ << "level " << k <<std::endl;
+			std::cerr << "remove_all" << cur->val_ <<std::endl;
 #endif
-		  delete t;
-		  return true;
-	  }
-      return (remove_all__(t, k-1));
-    }
-	return true;
-  }
-  else
-	  return false;  
+			cur = next;
+		}
+		return true;
 };
 
 
