@@ -13,9 +13,11 @@
 #include <std_ext.h>
 #include "slist.h"
 #include <cmath>
+#include "Structured.h"
 
 using namespace wnb;
 using namespace std;
+
 bool usage(int argc, char ** argv)
 {
   std::string dir;
@@ -143,9 +145,9 @@ struct Word
 			ps++;
 		}
 	}
- #ifdef DEBUG
-	slist->dump();
- #endif
+#ifdef DEBUG
+	slist->dumpIter();
+#endif
 	return slist;
 	}
 
@@ -273,7 +275,7 @@ int main(int argc, char ** argv)
   std::string wordnet_dir = argv[1];
   std::string word        = argv[2];
 
-  wordnet wn(wordnet_dir);
+   wordnet wn(wordnet_dir);
 
   // read input file
   
@@ -293,8 +295,8 @@ int main(int argc, char ** argv)
   }
 
   map<string, double> final;
-  if (selected->size() > 1)
-	  final = ClassifierAndDecisionTree(*selected, wn);
+   if (selected->size() > 1)
+	   final = ClassifierAndDecisionTree(*selected, wn);
 
   double sum = 0;
   int count = 0;
@@ -309,7 +311,11 @@ int main(int argc, char ** argv)
   cout << "-----" << endl;
     for(CI p = final.begin(); p != final.end(); p++)
 	  if (count > 0 && p->second >= (sum / count))
-		  cout << p->first << endl;
+	  {
+		  WordInfo wi = skiplist->search(p->first);
+		  cout << p->first << ", " << wi.offset[0] << endl;
+	  }
   cout << "-----" << endl;
   
+  skiplist->removeall();
 }
