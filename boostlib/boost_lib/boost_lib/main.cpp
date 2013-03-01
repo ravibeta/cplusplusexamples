@@ -151,6 +151,14 @@ struct Word
 	return slist;
 	}
 
+// should be extern; page rendering and pagination is independent from editor/content
+int* Paginator(string text)
+{
+	// index of return array is page number
+	// value of return array is offset of last word on the page 
+	return new int[50] ();
+
+}
 
 
 
