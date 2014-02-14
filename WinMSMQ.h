@@ -88,7 +88,7 @@ public:
 
 	HRESULT InitQueue(const WCHAR* wczQueueName, size_t qLen, const WCHAR* wczMachineName, size_t mLen, DWORD dwAccessMode, DWORD dwSharedMode);
         void CloseQueue();
-	HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen);
+	HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen, ULONG* bytesRead);
 	HRESULT SendQueue(const WCHAR* wczPayload, size_t nLen);
 	MQMSGPROPS* GetMsgProps();
 	void FreeMsgProps(MQMSGPROPS* pMsgProps, int numProperties);
