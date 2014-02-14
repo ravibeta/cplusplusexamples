@@ -247,8 +247,10 @@ WinMSMQMonitor::MonitorWorker(void)
     {
 		outSize = 0;
 		printf( "%s(): Worker issuing ReceiveQueue with buffer size %d", __FUNCTION__, BlockSize);
-           
+        do
+        {
         hr = queue->ReadQueue(&pBlock, &BlockSize, &outSize);
+        while(hr == MQ_ERROR_IO_TIMEOUT && !_isShuttingDown)
         if (FAILED(hr))
         {
                goto exit;
@@ -256,12 +258,6 @@ WinMSMQMonitor::MonitorWorker(void)
  
             // expected outSize != 0
             printf("%s(): ReceiveQueue returns with payload size = %d", __FUNCTION__, outSize);
-
-
-           // memcompare the message received with the last message, if its the same message we are peeking at it again
-           // the same message could be requeued for processing but there will only be one copy on the queue
-
-
 
 
         if (_isShuttingDown)
@@ -383,7 +379,7 @@ HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen, ULONG* bytes
 	HRESULT hr = E_FAIL;
 
 
-	for(;;)
+	for(int i = 0; i < 3; i++)
 	{
 		hr = MQReceiveMessage(hQ, 1000, MQ_ACTION_PEEK_CURRENT, pmsgProps, NULL, NULL, NULL, MQ_NO_TRANSACTION);
 
