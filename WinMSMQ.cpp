@@ -101,9 +101,6 @@ WinMSMQMonitor::run(void)
                 {
                     printf( "%s(): Data block size is 0", __FUNCTION__);
                 }
-
-
-                delete [] pBlock; 
             }
         }
     }
@@ -251,12 +248,11 @@ WinMSMQMonitor::MonitorWorker(void)
 		outSize = 0;
 		printf( "%s(): Worker issuing ReceiveQueue with buffer size %d", __FUNCTION__, BlockSize);
            
-        hr = queue->ReadQueue(&pBlock, &BlockSize);
+        hr = queue->ReadQueue(&pBlock, &BlockSize, &outSize);
         if (FAILED(hr))
         {
                goto exit;
         }
-		outSize = BlockSize;
  
             // expected outSize != 0
             printf("%s(): ReceiveQueue returns with payload size = %d", __FUNCTION__, outSize);
@@ -381,7 +377,7 @@ HRESULT CScopedMSMQWrapper::InitQueue(const WCHAR* wczQueueName, size_t qLen, co
 }
 
 
-HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen)
+HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen, ULONG* bytesRead)
 {
 	MQMSGPROPS* pmsgProps = GetMsgProps();
 	HRESULT hr = E_FAIL;
@@ -418,8 +414,8 @@ HRESULT CScopedMSMQWrapper::ReadQueue(VOID** pLast, ULONG* readLen)
 
 		VOID* pPayload = pmsgProps->aPropVar[3].caub.pElems;
 		ULONG size = pmsgProps->aPropVar[3].caub.cElems;
-
-		if (memcmp(pPayload, *pLast,  *readLen < size ? *readLen : size) == 0) 
+		*bytesRead =  *readLen < size ? *readLen : size;
+		if (memcmp(pPayload, *pLast, *bytesRead ) == 0) 
 		{
 			// we read the same sitting message
 			Sleep(1000);
