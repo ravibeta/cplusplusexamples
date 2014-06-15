@@ -49,7 +49,7 @@ Processor::EProcessorReturn TracerProcessor::execute(CowPipelineData& pData)
 
     Str newData;
     newdata.appendFormat("%s\n%s:%s", pData.getRaw().c_str(), time.c_str(), host.c_str());
-    pData.getWriter()->setRawDestructive(signedAuditEvent);
+    pData.getWriter()->setRawDestructive(newData);
     return Processor::eTrue;
 }
 
