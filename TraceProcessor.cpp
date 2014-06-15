@@ -37,7 +37,6 @@ Processor::EProcessorReturn TracerProcessor::execute(CowPipelineData& pData)
        return Processor::eTrue;
     }   
     const StrSegment& pRawData = pData.getRaw();
-    const Str *pIndex = pData.getIfAvail(PipelineData::indexKey());
 
     Str host;
     host = ServerConfig::instance()->getHostname();
@@ -48,7 +47,7 @@ Processor::EProcessorReturn TracerProcessor::execute(CowPipelineData& pData)
     now.appendFtime(time, fmt);
 
     Str newData;
-    newdata.appendFormat("%s\n%s:%s", pData.getRaw().c_str(), time.c_str(), host.c_str());
+    newData.appendFormat("%s\n%s:%s", Str(pData.getRaw()).c_str(), time.c_str(), host.c_str());
     pData.getWriter()->setRawDestructive(newData);
     return Processor::eTrue;
 }
